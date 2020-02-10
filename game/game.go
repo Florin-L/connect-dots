@@ -28,21 +28,18 @@ const (
 type state struct {
 	// true if a path is being edited
 	editingPath bool
+	// the current path
+	path *Path
 
 	// the source dot (current selected dot) if any
 	srcDot *Dot
-
 	// the destination dot (if any)
 	dstDot *Dot
 
 	// the color of the current selected dot
 	color graphics.Color
-
-	// the square of the board/grid the mouse in hovering over
+	// the square of the board that the mouse in hovering over
 	square Coordinate
-
-	// the current path
-	path *Path
 }
 
 func (s *state) reset() {
