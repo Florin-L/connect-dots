@@ -1,0 +1,56 @@
+{
+"size": 5,
+"difficulty": 0,
+"dots": [
+    {
+        "x": 0,
+        "y": 0,
+        "color": "red"
+    },
+    {
+        "x": 2,
+        "y": 0,
+        "color": "yellow"
+    },
+    {
+        "x": 3,
+        "y": 0,
+        "color": "green"
+    },
+    {
+        "x": 4,
+        "y": 0,
+        "color": "orange"
+    },
+    {
+        "x": 3,
+        "y": 2,
+        "color": "blue"
+    },
+    {
+        "x": 1,
+        "y": 3,
+        "color": "yellow"
+    },
+    {
+        "x": 2,
+        "y": 3,
+        "color": "green"
+    },
+    {
+        "x": 4,
+        "y": 3,
+        "color": "orange"
+    },
+    {
+        "x": 2,
+        "y": 4,
+        "color": "red"
+    },
+    {
+        "x": 4,
+        "y": 4,
+        "color": "blue"
+    }
+]
+}
