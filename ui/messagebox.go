@@ -23,21 +23,21 @@ const (
 // LevelCompletedBox informs the user that the level gets completed.
 // The user may choose to repeat the current level or to move on
 // to the next level or to quit the game.
-func LevelCompletedBox(moves int32) (int32, error) {
+func LevelCompletedBox(moves int32, window *sdl.Window) (int32, error) {
 	buttons := []sdl.MessageBoxButtonData{
-		{sdl.MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, Continue, "Continue"},
-		{0, Repeat, "Repeat"},
-		{sdl.MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, Quit, "Quit"},
+		{Flags: sdl.MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, ButtonID: Continue, Text: "Continue"},
+		{Flags: 0, ButtonID: Repeat, Text: "Repeat"},
+		{Flags: sdl.MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, ButtonID: Quit, Text: "Quit"},
 	}
 
 	text := fmt.Sprintf("Completed the level in %d moves", int(moves))
 	mbdata := sdl.MessageBoxData{
-		sdl.MESSAGEBOX_INFORMATION,
-		nil,
-		"Level completed",
-		text,
-		buttons,
-		nil,
+		Flags:       sdl.MESSAGEBOX_INFORMATION,
+		Window:      window,
+		Title:       "Level completed",
+		Message:     text,
+		Buttons:     buttons,
+		ColorScheme: nil,
 	}
 
 	id, err := sdl.ShowMessageBox(&mbdata)
@@ -48,18 +48,18 @@ func LevelCompletedBox(moves int32) (int32, error) {
 	return id, nil
 }
 
-func GameOver() error {
+func GameOver(window *sdl.Window) error {
 	buttons := []sdl.MessageBoxButtonData{
-		{sdl.MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, Ok, "Ok"},
+		{Flags: sdl.MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, ButtonID: Ok, Text: "Ok"},
 	}
 
 	mbdata := sdl.MessageBoxData{
-		sdl.MESSAGEBOX_INFORMATION,
-		nil,
-		"Game over",
-		"No more levels to be played. The game will be terminated.",
-		buttons,
-		nil,
+		Flags:       sdl.MESSAGEBOX_INFORMATION,
+		Window:      window,
+		Title:       "Game over",
+		Message:     "No more levels to be played. The game will be terminated.",
+		Buttons:     buttons,
+		ColorScheme: nil,
 	}
 
 	_, err := sdl.ShowMessageBox(&mbdata)

@@ -25,7 +25,7 @@ const (
 	completePath
 )
 
-type state struct {
+type editPathState struct {
 	// true if a path is being edited
 	editingPath bool
 	// the current path
@@ -42,7 +42,7 @@ type state struct {
 	square Coordinate
 }
 
-func (s *state) reset() {
+func (s *editPathState) reset() {
 	s.editingPath = false
 	s.srcDot = nil
 	s.dstDot = nil
@@ -58,6 +58,13 @@ type Game struct {
 
 	// The assets storage.
 	assets *graphics.AssetsStorage
+
+	// The window this game is rendered in.
+	window *sdl.Window
+
+	//
+	movesText    *graphics.Text
+	coverageText *graphics.Text
 
 	// The current level.
 	level *Level
@@ -75,7 +82,7 @@ type Game struct {
 	lineBounds map[Line]sdl.Rect
 
 	// The current state during a mouse move action.
-	state *state
+	state *editPathState
 
 	// The logger
 	log *zap.Logger
@@ -88,8 +95,8 @@ type Game struct {
 	coverage float64
 }
 
-func newState() *state {
-	return &state{
+func newState() *editPathState {
+	return &editPathState{
 		editingPath: false,
 		srcDot:      nil,
 		dstDot:      nil,
@@ -104,16 +111,19 @@ type option func(*Game)
 // New creates a game.
 func New(cfg *config.Config, assets *graphics.AssetsStorage, opts ...option) *Game {
 	g := &Game{
-		config:     cfg,
-		assets:     assets,
-		level:      nil,
-		board:      NewBoard(cfg.Size),
-		dotBounds:  make(map[Dot]sdl.Rect),
-		lineBounds: make(map[Line]sdl.Rect),
-		state:      newState(),
-		log:        zap.NewNop(),
-		moves:      0,
-		coverage:   0.0,
+		config:       cfg,
+		assets:       assets,
+		window:       nil,
+		movesText:    nil,
+		coverageText: nil,
+		level:        nil,
+		board:        NewBoard(cfg.Size),
+		dotBounds:    make(map[Dot]sdl.Rect),
+		lineBounds:   make(map[Line]sdl.Rect),
+		state:        newState(),
+		log:          zap.NewNop(),
+		moves:        0,
+		coverage:     0.0,
 	}
 
 	for _, opt := range opts {
@@ -121,6 +131,27 @@ func New(cfg *config.Config, assets *graphics.AssetsStorage, opts ...option) *Ga
 	}
 
 	return g
+}
+
+//
+func WithWindow(window *sdl.Window) option {
+	return func(g *Game) {
+		g.window = window
+	}
+}
+
+//
+func WithMoveText(text *graphics.Text) option {
+	return func(g *Game) {
+		g.movesText = text
+	}
+}
+
+//
+func WithCoverageText(text *graphics.Text) option {
+	return func(g *Game) {
+		g.coverageText = text
+	}
 }
 
 // WithLogger creates a game and sets the logger.
@@ -209,7 +240,7 @@ func (g *Game) Continue() {
 			difficulty++
 			if difficulty > int(config.Advanced) {
 				g.log.Info("No more files to load the levels from")
-				ui.GameOver()
+				ui.GameOver(g.window)
 				os.Exit(0)
 			}
 			// tries with the first file from the next difficulty level
@@ -252,6 +283,11 @@ func (g *Game) Continue() {
 
 // Draw renders all the graphics objects on a rendering target.
 func (g *Game) Draw(r *graphics.Renderer) {
+	g.movesText.Text = fmt.Sprintf("Moves %d", g.moves)
+	g.movesText.Draw(r, sdl.Point{X: 0, Y: 0})
+	g.coverageText.Text = fmt.Sprintf("Coverage: %4.2f %%", g.coverage)
+	g.coverageText.Draw(r, sdl.Point{X: 0, Y: 40})
+
 	g.assets.Grid.Blit(r)
 
 	for dot, rc := range g.dotBounds {
@@ -374,7 +410,7 @@ func (g *Game) MouseButtonUp(ev *sdl.MouseButtonEvent) {
 			zap.Float64("coverage", g.coverage))
 
 		if g.coverage == float64(100.0) {
-			action, err := ui.LevelCompletedBox(g.moves)
+			action, err := ui.LevelCompletedBox(g.moves, g.window)
 			if err != nil {
 				log.Fatal("Internal error", zap.Error(err))
 			}

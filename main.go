@@ -11,6 +11,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/veandco/go-sdl2/ttf"
 )
 
 func main() {
@@ -63,6 +64,17 @@ func main() {
 	}
 	defer window.Destroy()
 
+	if err := ttf.Init(); err != nil {
+		log.Fatal("Failed to init TTF API", zap.Error(err))
+	}
+	defer ttf.Quit()
+
+	font, err := ttf.OpenFont("data/fonts/test.ttf", 32)
+	if err != nil {
+		log.Fatal("Failed to open font", zap.Error(err))
+	}
+	defer font.Close()
+
 	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
 		log.Fatal("Failed to create the SDL renderer", zap.Error(err))
@@ -96,7 +108,13 @@ func main() {
 	}
 
 	game := game.New(config, storage,
-		game.WithLogger(log), game.WithLevel(l), game.WithFile(fileName))
+		game.WithWindow(window),
+		game.WithMoveText(graphics.NewText("Moves: 0", font)),
+		game.WithCoverageText(graphics.NewText("Coverage: 0%", font)),
+		game.WithLogger(log),
+		game.WithLevel(l),
+		game.WithFile(fileName),
+	)
 
 	running := true
 	for running {
@@ -127,6 +145,7 @@ func main() {
 
 		game.Draw(gr)
 		gr.Present()
-		sdl.Delay(10)
+		sdl.Delay(5)
 	}
+	os.Exit(0)
 }
