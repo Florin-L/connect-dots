@@ -477,8 +477,9 @@ func (g *Game) MouseMove(ev *sdl.MouseMotionEvent) {
 			g.state.dstDot = &Dot{c, g.state.color}
 			g.addLine(g.state.square, c, g.state.color, path)
 		}
-
 		g.state.square = c
+
+		g.coverage = g.board.Coverage()
 	}
 }
 
