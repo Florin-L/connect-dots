@@ -90,9 +90,9 @@ type Game struct {
 	// The overall attempts to successfully connect the dots.
 	moves int32
 
-	// The board coverage
-	// (the percentage of the squares covered by paths).
-	coverage float64
+	// The board coverage (the number of the squares which are covered
+	// with dots or lines).
+	coverage int32
 }
 
 func newState() *editPathState {
@@ -123,7 +123,7 @@ func New(cfg *config.Config, assets *graphics.AssetsStorage, opts ...option) *Ga
 		state:        newState(),
 		log:          zap.NewNop(),
 		moves:        0,
-		coverage:     0.0,
+		coverage:     0,
 	}
 
 	for _, opt := range opts {
@@ -181,6 +181,7 @@ func WithLevel(l *Level) option { //nolint
 			g.dotBounds[d] = rc
 		}
 		g.level = l
+		g.coverage = int32(len(g.dotBounds))
 	}
 }
 
@@ -198,7 +199,7 @@ func (g *Game) Repeat() {
 		delete(g.lineBounds, k)
 	}
 	g.moves = 0
-	g.coverage = 0.0
+	g.coverage = int32(len(g.dotBounds))
 
 	g.board.Clear()
 	g.board.InitPaths(g.level.Dots)
@@ -271,23 +272,31 @@ func (g *Game) Continue() {
 
 	g.state.reset()
 	g.level = nil
-	g.moves = 0
-	g.coverage = 0.0
 
 	g.board.Clear()
 	g.board = nil
 	g.board = NewBoard(l.Size)
 
 	WithLevel(l)(g)
+
+	g.moves = 0
+	g.coverage = int32(len(g.dotBounds))
 }
 
 // Draw renders all the graphics objects on a rendering target.
 func (g *Game) Draw(r *graphics.Renderer) {
-	g.movesText.Text = fmt.Sprintf("Moves %d", g.moves)
-	g.movesText.Draw(r, sdl.Point{X: 0, Y: 0})
-	g.coverageText.Text = fmt.Sprintf("Coverage: %4.2f %%", g.coverage)
-	g.coverageText.Draw(r, sdl.Point{X: 0, Y: 40})
+	if g.movesText != nil {
+		g.movesText.Text = fmt.Sprintf("Moves %d", g.moves)
+		g.movesText.Draw(r, sdl.Point{X: 0, Y: 0})
+	}
 
+	if g.coverageText != nil {
+		c := g.coverage - int32(len(g.dotBounds))
+		sz := (g.board.size * g.board.size) - int32(len(g.dotBounds))
+		pc := int(float64(c) / float64(sz) * 100.0)
+		g.coverageText.Text = fmt.Sprintf("Coverage: %d %%", pc)
+		g.coverageText.Draw(r, sdl.Point{X: 0, Y: 40})
+	}
 	g.assets.Grid.Blit(r)
 
 	for dot, rc := range g.dotBounds {
@@ -402,14 +411,8 @@ func (g *Game) MouseButtonUp(ev *sdl.MouseButtonEvent) {
 		path.EndDot = g.state.srcDot
 
 		g.moves++
-		g.coverage = g.board.Coverage()
 
-		g.log.Debug(
-			"Statistics",
-			zap.Int32("moves", g.moves),
-			zap.Float64("coverage", g.coverage))
-
-		if g.coverage == float64(100.0) {
+		if g.coverage == g.board.size*g.board.size {
 			action, err := ui.LevelCompletedBox(g.moves, g.window)
 			if err != nil {
 				log.Fatal("Internal error", zap.Error(err))
@@ -440,6 +443,8 @@ func (g *Game) MouseButtonUp(ev *sdl.MouseButtonEvent) {
 			path.Lines = nil
 		}
 	}
+
+	g.coverage = g.board.Coverage()
 	g.state.reset()
 }
 

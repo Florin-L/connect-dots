@@ -3,7 +3,6 @@ package game
 import (
 	"connect-dots/graphics"
 	"fmt"
-	"math"
 )
 
 // Coordinate stores a board coordinates (Y|row and X|column).
@@ -156,15 +155,15 @@ func (b *Board) Clear() {
 	}
 }
 
-// Coverage computes the board coverage.
-func (b *Board) Coverage() float64 {
+// Coverage returns the number of covered squares.
+func (b *Board) Coverage() int32 {
 	count := int32(0)
 	for _, c := range b.colors {
 		if c != graphics.NoColor {
 			count++
 		}
 	}
-	return float64(count) / math.Pow(float64(b.size), 2.0) * float64(100.0)
+	return count
 }
 
 func (b *Board) Dump() {
