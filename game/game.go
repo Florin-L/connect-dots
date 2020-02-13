@@ -238,7 +238,7 @@ func (g *Game) Continue() {
 
 	var filePath string
 	for {
-		filePath = fmt.Sprintf("%s/data/%dx%d/%d.json", dir, nextSize, nextSize, next)
+		filePath = fmt.Sprintf("%s/data/%d/%d.json", dir, nextSize, next)
 		g.log.Debug("Try to load the level from", zap.String("file path", filePath))
 
 		_, err := os.Stat(filePath)

@@ -85,7 +85,7 @@ func main() {
 	}
 
 	fileName := "0.json"
-	path := fmt.Sprintf("%s/data/%dx%d/%s", dir, size, size, fileName)
+	path := fmt.Sprintf("%s/data/%d/%s", dir, size, fileName)
 	l, err := game.LoadFromFile(path)
 	if err != nil {
 		log.Fatal("Failed to load the level", zap.Error(err))

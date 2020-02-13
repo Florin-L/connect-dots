@@ -1,7 +1,6 @@
 package game
 
 import (
-	"connect-dots/config"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -70,7 +69,6 @@ func TestLoad(t *testing.T) {
 	l, err := Load(blobJson)
 	assert.Nil(t, err)
 	assert.Equal(t, l.Size, int32(5))
-	assert.Equal(t, l.Difficulty, config.Easy)
 }
 
 func TestLoadWrongSizeValue(t *testing.T) {
