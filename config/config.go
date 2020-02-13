@@ -2,14 +2,6 @@ package config
 
 import "github.com/veandco/go-sdl2/sdl"
 
-type Difficulty int
-
-const (
-	Easy Difficulty = iota
-	Intermediate
-	Advanced
-)
-
 // Config stores the game configuration.
 type Config struct {
 	// The width of the application window.
@@ -25,9 +17,6 @@ type Config struct {
 	// The radius of the dot.
 	DotRadius int32
 
-	// The difficulty level.
-	Difficulty Difficulty
-
 	// The board color.
 	Color *sdl.Color
 }
@@ -39,10 +28,9 @@ func New(opts ...Option) *Config {
 	cfg := &Config{
 		WindowWidth:  800,
 		WindowHeight: 600,
-		Size:         10,
+		Size:         5,
 		SquareSize:   48,
 		DotRadius:    16,
-		Difficulty:   Easy,
 		Color:        &sdl.Color{R: 168, G: 168, B: 168, A: 255},
 	}
 

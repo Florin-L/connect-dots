@@ -1,7 +1,6 @@
 package game
 
 import (
-	"connect-dots/config"
 	"connect-dots/graphics"
 	"encoding/json"
 	"errors"
@@ -15,9 +14,6 @@ import (
 type Level struct {
 	// Size is the size of the board (5,6,7,8,9 or 10).
 	Size int32
-
-	// Difficulty level (Easy, Intermediate or Advanced).
-	Difficulty config.Difficulty
 
 	// The dots loaded from the file level.
 	Dots []Dot
@@ -44,9 +40,8 @@ func LoadFromFile(path string) (*Level, error) {
 // Load decodes a Json Blob and instantiate a Level struct.
 func Load(data []byte) (*Level, error) {
 	var level struct {
-		Size       int32 `json:"size"`
-		Difficulty int   `json:"difficulty"`
-		Dots       []struct {
+		Size int32 `json:"size"`
+		Dots []struct {
 			X     int32  `json:"x"`
 			Y     int32  `json:"y"`
 			Color string `json:"color"`
@@ -62,11 +57,6 @@ func Load(data []byte) (*Level, error) {
 		return nil, fmt.Errorf("Invalid value for size: %d", level.Size)
 	}
 
-	if config.Difficulty(level.Difficulty) < config.Easy ||
-		config.Difficulty(level.Difficulty) > config.Advanced {
-		return nil, fmt.Errorf("Invalid value for difficulty: %d", level.Difficulty)
-	}
-
 	if len(level.Dots) == 0 {
 		return nil, errors.New("No dots found in the level file")
 	}
@@ -74,7 +64,6 @@ func Load(data []byte) (*Level, error) {
 	l := &Level{}
 
 	l.Size = level.Size
-	l.Difficulty = config.Difficulty(level.Difficulty)
 	l.Dots = []Dot{}
 	for _, dot := range level.Dots {
 		var c graphics.Color

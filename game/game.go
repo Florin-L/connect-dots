@@ -25,6 +25,8 @@ const (
 	completePath
 )
 
+const maxBoardSize = 10
+
 type editPathState struct {
 	// true if a path is being edited
 	editingPath bool
@@ -225,30 +227,25 @@ func (g *Game) Continue() {
 		log.Fatal("Failed to get the current working directory", zap.Error(err))
 	}
 
-	difficulty := int(g.level.Difficulty)
-	size := g.board.size
+	nextSize := g.board.size
 
 	var filePath string
 	for {
-		filePath = fmt.Sprintf("%s/data/%dx%d/level%d/%d.json",
-			dir, size, size, difficulty, next)
-
+		filePath = fmt.Sprintf("%s/data/%dx%d/%d.json", dir, nextSize, nextSize, next)
 		g.log.Debug("Try to load the level from", zap.String("file path", filePath))
 
 		_, err := os.Stat(filePath)
 		if os.IsNotExist(err) {
-			// moves on to the next difficulty level
-			difficulty++
-			if difficulty > int(config.Advanced) {
+			if nextSize >= maxBoardSize {
 				g.log.Info("No more files to load the levels from")
 				ui.GameOver(g.window)
 				os.Exit(0)
 			}
-			// tries with the first file from the next difficulty level
+			nextSize++
 			next = 0
-		} else {
-			break
+			continue
 		}
+		break
 	}
 	g.file = fmt.Sprintf("%d.json", next)
 

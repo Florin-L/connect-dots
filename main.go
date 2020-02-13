@@ -16,21 +16,11 @@ import (
 
 func main() {
 	var (
-		size  int
-		level int
+		size int
 	)
 
 	flag.IntVar(&size, "size", 5, "the board size")
-	flag.IntVar(&level, "level", int(config.Easy), "the dificulty level")
 	flag.Parse()
-
-	if level < int(config.Easy) {
-		level = int(config.Easy)
-	}
-
-	if level > int(config.Advanced) {
-		level = int(config.Advanced)
-	}
 
 	log, err := zap.NewDevelopment()
 	if err != nil {
@@ -47,12 +37,7 @@ func main() {
 	withSize := func(sz int32) config.Option {
 		return func(c *config.Config) { c.Size = sz }
 	}
-	withLevel := func(l config.Difficulty) config.Option {
-		return func(c *config.Config) { c.Difficulty = l }
-	}
-	config := config.New(
-		withSize(int32(size)),
-		withLevel(config.Difficulty(level)))
+	config := config.New(withSize(int32(size)))
 
 	window, err := sdl.CreateWindow("dots connected",
 		sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED,
@@ -98,10 +83,8 @@ func main() {
 		log.Fatal("Failed to get the current working directory", zap.Error(err))
 	}
 
-	fileName := fmt.Sprintf("%d.json", level)
-	path := fmt.Sprintf("%s/data/%dx%d/level%d/%s", dir, size, size, level, fileName)
-	log.Debug("Level file", zap.String("file", path))
-
+	fileName := "0.json"
+	path := fmt.Sprintf("%s/data/%dx%d/%s", dir, size, size, fileName)
 	l, err := game.LoadFromFile(path)
 	if err != nil {
 		log.Fatal("Failed to load the level", zap.Error(err))
