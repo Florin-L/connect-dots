@@ -22,12 +22,13 @@ type Level struct {
 // LoadFromFile loads the level data from a file.
 // The path is relative to the directory where the game process runs in
 // and has the following structure:
-// data/<n>x<n>/level<d>/<m>.json
+//
+// data/<n>x<n>/<m>.json
+//
 // where:
 // - data is a directory relative to the working directory
 // - <n> is the board dimension (5,6,7,8,9,10)
-// - <d> is the difficulty (0: easy, 1: intermediate, 2: advanced)
-// - <m> is the m-th file in the directory where we
+// - <m> is the m-th file in the directory where we look for the level file
 func LoadFromFile(path string) (*Level, error) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {

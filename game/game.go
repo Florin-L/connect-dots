@@ -55,6 +55,10 @@ func (s *editPathState) reset() {
 
 // Game implements the game.
 type Game struct {
+	// True if the level was completed:
+	// all the dots are connected and all the squares are visited
+	Completed bool
+
 	// The game configuration.
 	config *config.Config
 
@@ -90,7 +94,7 @@ type Game struct {
 	log *zap.Logger
 
 	// The overall attempts to successfully connect the dots.
-	moves int32
+	Moves int32
 
 	// The board coverage (the number of the squares which are covered
 	// with dots or lines).
@@ -113,6 +117,7 @@ type option func(*Game)
 // New creates a game.
 func New(cfg *config.Config, assets *graphics.AssetsStorage, opts ...option) *Game {
 	g := &Game{
+		Completed:    false,
 		config:       cfg,
 		assets:       assets,
 		window:       nil,
@@ -124,7 +129,7 @@ func New(cfg *config.Config, assets *graphics.AssetsStorage, opts ...option) *Ga
 		lineBounds:   make(map[Line]sdl.Rect),
 		state:        newState(),
 		log:          zap.NewNop(),
-		moves:        0,
+		Moves:        0,
 		coverage:     0,
 	}
 
@@ -200,7 +205,9 @@ func (g *Game) Repeat() {
 	for k := range g.lineBounds {
 		delete(g.lineBounds, k)
 	}
-	g.moves = 0
+
+	g.Completed = false
+	g.Moves = 0
 	g.coverage = int32(len(g.dotBounds))
 
 	g.board.Clear()
@@ -276,14 +283,15 @@ func (g *Game) Continue() {
 
 	WithLevel(l)(g)
 
-	g.moves = 0
+	g.Completed = false
+	g.Moves = 0
 	g.coverage = int32(len(g.dotBounds))
 }
 
 // Draw renders all the graphics objects on a rendering target.
 func (g *Game) Draw(r *graphics.Renderer) {
 	if g.movesText != nil {
-		g.movesText.Text = fmt.Sprintf("Moves %d", g.moves)
+		g.movesText.Text = fmt.Sprintf("Moves %d", g.Moves)
 		g.movesText.Draw(r, sdl.Point{X: 0, Y: 0})
 	}
 
@@ -407,22 +415,9 @@ func (g *Game) MouseButtonUp(ev *sdl.MouseButtonEvent) {
 		path.StartDot = g.state.dstDot
 		path.EndDot = g.state.srcDot
 
-		g.moves++
-
+		g.Moves++
 		if g.coverage == g.board.size*g.board.size {
-			action, err := ui.LevelCompletedBox(g.moves, g.window)
-			if err != nil {
-				log.Fatal("Internal error", zap.Error(err))
-			}
-
-			switch action {
-			case ui.Continue:
-				g.Continue()
-			case ui.Repeat:
-				g.Repeat()
-			case ui.Quit:
-				os.Exit(0)
-			}
+			g.Completed = true
 		}
 	} else {
 		path, ok := g.board.Paths[*g.state.srcDot]

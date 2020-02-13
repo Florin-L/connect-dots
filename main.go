@@ -4,6 +4,7 @@ import (
 	"connect-dots/config"
 	"connect-dots/game"
 	"connect-dots/graphics"
+	"connect-dots/ui"
 	"flag"
 	"fmt"
 	"os"
@@ -129,6 +130,23 @@ func main() {
 		game.Draw(gr)
 		gr.Present()
 		sdl.Delay(5)
+
+		if game.Completed {
+			action, err := ui.LevelCompletedBox(game.Moves, window)
+			if err != nil {
+				log.Fatal("Internal error", zap.Error(err))
+			}
+
+			switch action {
+			case ui.Continue:
+				game.Continue()
+			case ui.Repeat:
+				game.Repeat()
+			case ui.Quit:
+				os.Exit(0)
+			}
+		}
+
 	}
 	os.Exit(0)
 }
