@@ -8,7 +8,7 @@ The application is not (and will not be) a commercial grade 'game' (not a casual
 
 The Go binding for libsdl may be found at this location: https://github.com/veandco/go-sdl2 .
 
-The game could be built statically against go-sdl2 libraries as by running the followin command (here the OS is linux): 
+The game could be built statically against go-sdl2 libraries by running the followin command (here the OS is linux): 
 
 CGO_ENABLED=1 CC=gcc GOOS=linux GOARCH=amd64 go build -tags static -ldflags "-s -w"
 
