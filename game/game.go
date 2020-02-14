@@ -217,7 +217,9 @@ func (g *Game) Repeat() {
 }
 
 // Continue tries to move on to the next level.
-func (g *Game) Continue() {
+// It also triggers the creation of a new grid graphics asset
+// if the size of the board has changed.
+func (g *Game) Continue(gr *graphics.Renderer) {
 	s := strings.Split(g.file, ".")
 	if len(s) != 2 {
 		g.log.Fatal("Wrong file name for the game level", zap.String("file name", g.file))
@@ -281,6 +283,11 @@ func (g *Game) Continue() {
 	g.board = nil
 	g.board = NewBoard(l.Size)
 
+	g.config.Size = l.Size
+	g.assets.Grid.Destroy()
+	g.assets.Grid = nil
+	g.assets.Grid = graphics.CreateGrid(gr, g.config)
+
 	WithLevel(l)(g)
 
 	g.Completed = false
@@ -302,6 +309,7 @@ func (g *Game) Draw(r *graphics.Renderer) {
 		g.coverageText.Text = fmt.Sprintf("Coverage: %d %%", pc)
 		g.coverageText.Draw(r, sdl.Point{X: 0, Y: 40})
 	}
+
 	g.assets.Grid.Blit(r)
 
 	for dot, rc := range g.dotBounds {

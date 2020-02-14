@@ -26,7 +26,7 @@ func NewAssetsStorage() *AssetsStorage {
 
 // Init creates the graphics assests.
 func (s *AssetsStorage) Init(renderer *Renderer, config *config.Config) error {
-	grid := createGrid(renderer, config)
+	grid := CreateGrid(renderer, config)
 	s.Grid = grid
 
 	s.Dots = make([]Renderable, len(Colors))
@@ -55,7 +55,9 @@ func (s *AssetsStorage) Destroy() {
 	}
 }
 
-func createGrid(renderer *Renderer, cfg *config.Config) *Grid {
+// CreateGrid creates a graphics object which is used to render
+// a grid of a given size.
+func CreateGrid(renderer *Renderer, cfg *config.Config) *Grid {
 	crtTarget := renderer.GetRenderTarget()
 	defer renderer.SetRenderTarget(crtTarget)
 

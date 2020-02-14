@@ -139,14 +139,13 @@ func main() {
 
 			switch action {
 			case ui.Continue:
-				game.Continue()
+				game.Continue(gr)
 			case ui.Repeat:
 				game.Repeat()
 			case ui.Quit:
 				os.Exit(0)
 			}
 		}
-
 	}
 	os.Exit(0)
 }
