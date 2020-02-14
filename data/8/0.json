@@ -72,6 +72,11 @@
         "color": "pink"
     },
     {
+        "x": 7,
+        "y": 6,
+        "color": "green"
+    },
+    {
         "x": 0,
         "y": 7,
         "color": "green"

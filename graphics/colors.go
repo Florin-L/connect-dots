@@ -10,10 +10,10 @@ const (
 	Blue
 	Yellow
 	Magenta
+	Cyan
 	Pink
 	Orange
 	Brown
-	Cyan
 	White
 	Black
 	NoColor Color = -1
@@ -25,10 +25,10 @@ var Colors = []sdl.Color{
 	sdl.Color{R: 0, G: 0, B: 255, A: 255},
 	sdl.Color{R: 255, G: 255, B: 0, A: 255},
 	sdl.Color{R: 255, G: 0, B: 255, A: 255},
+	sdl.Color{R: 0, G: 183, B: 235, A: 255},
 	sdl.Color{R: 255, G: 20, B: 147, A: 255},
 	sdl.Color{R: 255, G: 69, B: 0, A: 255},
 	sdl.Color{R: 139, G: 69, B: 19, A: 255},
-	sdl.Color{R: 0, G: 183, B: 235, A: 255},
 	sdl.Color{R: 255, G: 255, B: 255, A: 255},
 	sdl.Color{R: 0, G: 0, B: 0, A: 255},
 }

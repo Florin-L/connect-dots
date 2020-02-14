@@ -77,6 +77,8 @@ func Load(data []byte) (*Level, error) {
 			c = graphics.Blue
 		case "yellow":
 			c = graphics.Yellow
+		case "cyan":
+			c = graphics.Cyan
 		case "pink":
 			c = graphics.Pink
 		case "orange":
