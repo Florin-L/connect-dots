@@ -6,11 +6,21 @@ The segments should not intersects each other.
 
 The application is not (and will not be) a commercial grade 'game' (not a casual game either) but a simple proof of concept which allowed me to check how fast or easy I could implement a simple board game using golang (https://golang.org/) and libsdl (https://www.libsdl.org/). 
 
-The Go binding for libsdl may be found at this location: https://github.com/veandco/go-sdl2 .
+The Go binding for libsdl may be found at https://github.com/veandco/go-sdl2. 
 
-The game could be built statically against go-sdl2 libraries by running the following command (here the OS is linux): 
+Please check the following link in order to check how to install the libsdl packages:
 
-CGO_ENABLED=1 CC=gcc GOOS=linux GOARCH=amd64 go build -tags static -ldflags "-s -w"
+https://github.com/veandco/go-sdl2#requirements
+
+Also you may check
+
+https://github.com/veandco/go-sdl2#installation
+
+in order to check how to install go-sdl2.
+
+To build the 'game' you may run the following command:
+
+$ GO111MODULE=on go build -mod=vendor
 
 # Screenshoots
 ![connect-dots-3](https://user-images.githubusercontent.com/59707990/74368823-09751280-4ddd-11ea-9c28-47c72c4d2814.png)

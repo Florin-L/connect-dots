@@ -283,16 +283,18 @@ func (g *Game) Continue(gr *graphics.Renderer) {
 	g.board = nil
 	g.board = NewBoard(l.Size)
 
-	g.config.Size = l.Size
-	g.assets.Grid.Destroy()
-	g.assets.Grid = nil
-	g.assets.Grid = graphics.CreateGrid(gr, g.config)
-
-	WithLevel(l)(g)
-
 	g.Completed = false
 	g.Moves = 0
 	g.coverage = int32(len(g.dotBounds))
+
+	if g.config.Size != g.board.size {
+		g.config.Size = g.board.size
+		g.assets.Grid.Destroy()
+		g.assets.Grid = nil
+		g.assets.Grid = graphics.CreateGrid(gr, g.config)
+	}
+
+	WithLevel(l)(g)
 }
 
 // Draw renders all the graphics objects on a rendering target.
