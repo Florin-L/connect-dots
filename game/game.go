@@ -247,7 +247,7 @@ func (g *Game) Continue(gr *graphics.Renderer) {
 		if os.IsNotExist(err) {
 			if nextSize >= maxBoardSize {
 				g.log.Info("No more files to load the levels from")
-				ui.GameOver(g.window)
+				ui.GameOver(g.window) //nolint
 				os.Exit(0)
 			}
 			nextSize++
@@ -301,7 +301,10 @@ func (g *Game) Continue(gr *graphics.Renderer) {
 func (g *Game) Draw(r *graphics.Renderer) {
 	if g.movesText != nil {
 		g.movesText.Text = fmt.Sprintf("Moves %d", g.Moves)
-		g.movesText.Draw(r, sdl.Point{X: 0, Y: 0})
+		err := g.movesText.Draw(r, sdl.Point{X: 0, Y: 0})
+		if err != nil {
+			g.log.Fatal("Draw text (moves) failed", zap.Error(err))
+		}
 	}
 
 	if g.coverageText != nil {
@@ -309,7 +312,10 @@ func (g *Game) Draw(r *graphics.Renderer) {
 		sz := (g.board.size * g.board.size) - int32(len(g.dotBounds))
 		pc := int(float64(c) / float64(sz) * 100.0)
 		g.coverageText.Text = fmt.Sprintf("Coverage: %d %%", pc)
-		g.coverageText.Draw(r, sdl.Point{X: 0, Y: 40})
+		err := g.coverageText.Draw(r, sdl.Point{X: 0, Y: 40})
+		if err != nil {
+			g.log.Fatal("Draw text (coverge) failed", zap.Error(err))
+		}
 	}
 
 	g.assets.Grid.Blit(r)

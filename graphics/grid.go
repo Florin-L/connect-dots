@@ -34,7 +34,7 @@ func (g *Grid) Bounds() *sdl.Rect {
 
 // Destroy releases the graphics resources used by the grid.
 func (g *Grid) Destroy() {
-	g.texture.Destroy()
+	g.texture.Destroy() //nolint
 }
 
 // ClickedInside checks if the given screen coordinate is within

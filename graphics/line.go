@@ -25,5 +25,5 @@ func (l *Line) Bounds() *sdl.Rect {
 }
 
 func (l *Line) Destroy() {
-	l.texture.Destroy()
+	l.texture.Destroy() //nolint
 }

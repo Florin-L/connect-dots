@@ -30,7 +30,7 @@ func (t *Text) Draw(r *Renderer, pos sdl.Point) error {
 	if err != nil {
 		return err
 	}
-	defer tex.Destroy()
+	defer tex.Destroy() //nolint
 
 	rc := sdl.Rect{X: pos.X, Y: pos.Y, W: s.W, H: s.H}
 	if err := r.Renderer.Copy(tex, nil, &rc); err != nil {

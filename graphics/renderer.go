@@ -21,7 +21,7 @@ func NewRenderer(r *sdl.Renderer, l *zap.Logger) *Renderer {
 
 // Destroy releases the resources allocated to the renderer.
 func (r *Renderer) Destroy() {
-	r.Renderer.Destroy()
+	r.Renderer.Destroy() //nolint
 }
 
 // Clear clears the current rendering target with the drawing color.

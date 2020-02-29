@@ -27,7 +27,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to create a zap logger", zap.Error(err))
 	}
-	defer log.Sync()
+	defer log.Sync() //nolint
 
 	err = sdl.Init(sdl.INIT_EVERYTHING)
 	if err != nil {
@@ -48,7 +48,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to create window", zap.Error(err))
 	}
-	defer window.Destroy()
+	defer window.Destroy() //nolint
 
 	if err := ttf.Init(); err != nil {
 		log.Fatal("Failed to init TTF API", zap.Error(err))
@@ -109,7 +109,6 @@ func main() {
 			switch t := ev.(type) {
 			case *sdl.QuitEvent:
 				running = false
-				break
 
 			case *sdl.MouseButtonEvent:
 				if t.Type == sdl.MOUSEBUTTONDOWN {

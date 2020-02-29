@@ -76,7 +76,7 @@ func CreateGrid(renderer *Renderer, cfg *config.Config) *Grid {
 		cfg.SquareSize,
 		cfg.SquareSize,
 	)
-	defer t.Destroy()
+	defer t.Destroy() //nolint
 
 	renderer.SetRenderTarget(t)
 	renderer.SetDrawColor(cfg.Color.R, cfg.Color.G, cfg.Color.B, cfg.Color.A)
@@ -159,8 +159,8 @@ func createVLine(color sdl.Color,
 		r.W,
 		r.H,
 	)
-	t.SetBlendMode(sdl.BLENDMODE_BLEND)
-	t.SetAlphaMod(50)
+	t.SetBlendMode(sdl.BLENDMODE_BLEND) //nolint
+	t.SetAlphaMod(50)                   //nolint
 	renderer.SetRenderTarget(t)
 
 	renderer.SetDrawColor(cfg.Color.R, cfg.Color.G, cfg.Color.B, cfg.Color.A)
@@ -190,8 +190,8 @@ func createHLine(color sdl.Color,
 		r.W,
 		r.H,
 	)
-	t.SetBlendMode(sdl.BLENDMODE_BLEND)
-	t.SetAlphaMod(50)
+	t.SetBlendMode(sdl.BLENDMODE_BLEND) //nolint
+	t.SetAlphaMod(50)                   //nolint
 	renderer.SetRenderTarget(t)
 
 	renderer.SetDrawColor(cfg.Color.R, cfg.Color.G, cfg.Color.B, cfg.Color.A)
